@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación: La Célula (Biología)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Evaluación: La Célula (Biología)</h1>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+        <button id="submit">Enviar respuestas</button>
+        <div id="results"></div>
+    </div>
+    <footer>
+        &copy; Derechos Reservados Prof. Alberto Sanchez
+    </footer>
+    <script>
+        const quizData = [
+            {
+                question: "¿Qué es una célula?",
+                answers: [
+                    { text: "La unidad básica de la vida.", correct: true },
+                    { text: "Una molécula de ADN.", correct: false },
+                    { text: "Un organismo multicelular.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el núcleo celular?",
+                answers: [
+                    { text: "El organelo que contiene el material genético de la célula.", correct: true },
+                    { text: "La parte de la célula que produce energía.", correct: false },
+                    { text: "La membrana que rodea la célula.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la membrana plasmática?",
+                answers: [
+                    { text: "La barrera que rodea y protege la célula.", correct: true },
+                    { text: "El organelo que produce energía.", correct: false },
+                    { text: "La estructura que contiene el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el citoplasma?",
+                answers: [
+                    { text: "El material gelatinoso dentro de la célula donde se encuentran los organelos.", correct: true },
+                    { text: "La barrera que rodea y protege la célula.", correct: false },
+                    { text: "El organelo que contiene el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué son los ribosomas?",
+                answers: [
+                    { text: "Los organelos donde se sintetizan las proteínas.", correct: true },
+                    { text: "Los organelos que producen energía.", correct: false },
+                    { text: "Los organelos que contienen el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el retículo endoplásmico?",
+                answers: [
+                    { text: "Un sistema de membranas dentro de la célula que ayuda en la síntesis y transporte de proteínas y lípidos.", correct: true },
+                    { text: "Un organelo que produce energía.", correct: false },
+                    { text: "Una estructura que contiene el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el aparato de Golgi?",
+                answers: [
+                    { text: "Un organelo que modifica, clasifica y empaqueta proteínas y lípidos para su transporte.", correct: true },
+                    { text: "Un organelo que produce energía.", correct: false },
+                    { text: "Un organelo que contiene el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué son las mitocondrias?",
+                answers: [
+                    { text: "Los organelos que producen energía a través de la respiración celular.", correct: true },
+                    { text: "Los organelos donde se sintetizan las proteínas.", correct: false },
+                    { text: "Los organelos que contienen el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el citoesqueleto?",
+                answers: [
+                    { text: "Una red de fibras dentro de la célula que proporciona soporte y ayuda en el movimiento celular.", correct: true },
+                    { text: "Un organelo que produce energía.", correct: false },
+                    { text: "Una estructura que contiene el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la pared celular?",
+                answers: [
+                    { text: "Una estructura rígida que rodea la membrana plasmática en las células vegetales.", correct: true },
+                    { text: "Un organelo que produce energía.", correct: false },
+                    { text: "Una estructura que contiene el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué son los cloroplastos?",
+                answers: [
+                    { text: "Los organelos donde se realiza la fotosíntesis en las células vegetales.", correct: true },
+                    { text: "Los organelos que producen energía.", correct: false },
+                    { text: "Los organelos que contienen el material genético.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el ciclo celular?",
+                answers: [
+                    { text: "El conjunto de eventos que una célula atraviesa desde su formación hasta su división.", correct: true },
+                    { text: "El proceso de síntesis de proteínas.", correct: false },
+                    { text: "El proceso de respiración celular.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la mitosis?",
+                answers: [
+                    { text: "El proceso de división celular en el que una célula madre produce dos células hijas genéticamente idénticas.", correct: true },
+                    { text: "El proceso de división celular que reduce el número de cromosomas a la mitad.", correct: false },
+                    { text: "El proceso de síntesis de proteínas.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la meiosis?",
+                answers: [
+                    { text: "El proceso de división celular que reduce el número de cromosomas a la mitad y produce gametos.", correct: true },
+                    { text: "El proceso de división celular en el que una célula madre produce dos células hijas genéticamente idénticas.", correct: false },
+                    { text: "El proceso de síntesis de proteínas.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la apoptosis?",
+                answers: [
+                    { text: "El proceso de muerte celular programada.", correct: true },
+                    { text: "El proceso de división celular.", correct: false },
+                    { text: "El proceso de síntesis de proteínas.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el ciclo de Krebs?",
+                answers: [
+                    { text: "Una serie de reacciones químicas en las mitocondrias que producen energía.", correct: true },
+                    { text: "Una serie de reacciones químicas en los cloroplastos que producen glucosa.", correct: false },
+                    { text: "Una serie de reacciones químicas en el citoplasma que producen ATP.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la fotosíntesis?",
+                answers: [
+                    { text: "El proceso por el cual las plantas convierten la luz solar en energía química.", correct: true },
+                    { text: "El proceso por el cual los animales producen energía.", correct: false },
+                    { text: "El proceso por el cual las bacterias se dividen.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la respiración celular?",
+                answers: [
+                    { text: "El proceso por el cual las células convierten la glucosa en energía utilizable.", correct: true },
+                    { text: "El proceso por el cual las plantas producen glucosa.", correct: false },
+                    { text: "El proceso por el cual las células se dividen.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la fermentación?",
+                answers: [
+                    { text: "Un proceso anaeróbico que permite la producción de energía sin oxígeno.", correct: true },
+                    { text: "Un proceso aeróbico que produce energía con oxígeno.", correct: false },
+                    { text: "Un proceso de división celular.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un orgánulo?",
+                answers: [
+                    { text: "Una estructura especializada dentro de una célula que realiza funciones específicas.", correct: true },
+                    { text: "Un grupo de células que trabajan juntas.", correct: false },
+                    { text: "Una molécula de ADN.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la fagocitosis?",
+                answers: [
+                    { text: "El proceso por el cual una célula engulle partículas grandes o microorganismos.", correct: true },
+                    { text: "El proceso por el cual una célula expulsa partículas.", correct: false },
+                    { text: "El proceso por el cual una célula se divide.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la pinocitosis?",
+                answers: [
+                    { text: "El proceso por el cual una célula engulle pequeñas gotas de líquido.", correct: true },
+                    { text: "El proceso por el cual una célula expulsa partículas.", correct: false },
+                    { text: "El proceso por el cual una célula se divide.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la exocitosis?",
+                answers: [
+                    { text: "El proceso por el cual una célula expulsa partículas grandes o vesículas.", correct: true },
+                    { text: "El proceso por el cual una célula engulle partículas grandes.", correct: false },
+                    { text: "El proceso por el cual una célula se divide.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la endocitosis?",
+                answers: [
+                    { text: "El proceso por el cual una célula engulle partículas grandes o líquidos.", correct: true },
+                    { text: "El proceso por el cual una célula expulsa partículas grandes.", correct: false },
+                    { text: "El proceso por el cual una célula se divide.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la citocinesis?",
+                answers: [
+                    { text: "La división del citoplasma de una célula al final de la mitosis o meiosis.", correct: true },
+                    { text: "La síntesis de proteínas en una célula.", correct: false },
+                    { text: "La respiración celular en una célula.", correct: false }
+                ]
+            }
+        ];
+
+        let attempt = 0;
+        const maxAttempts = 3;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '';
+            quizData.forEach((data, index) => {
+                const questionContainer = document.createElement('div');
+                questionContainer.className = 'question';
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.innerText = `${index + 1}. ${data.question}`;
+                questionContainer.appendChild(questionTitle);
+
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options';
+
+                shuffle(data.answers).forEach(answer => {
+                    const option = document.createElement('li');
+                    const optionLabel = document.createElement('label');
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question${index}`;
+                    optionInput.value = answer.correct;
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(document.createTextNode(answer.text));
+                    option.appendChild(optionLabel);
+                    optionsList.appendChild(option);
+                });
+
+                questionContainer.appendChild(optionsList);
+                quizContainer.appendChild(questionContainer);
+            });
+        }
+
+        function submitQuiz() {
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+                return;
+            }
+
+            const resultsContainer = document.getElementById('results');
+            const answers = document.querySelectorAll('input[type="radio"]:checked');
+            let score = 0;
+
+            quizData.forEach((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                if (selected === true) {
+                    score += 0.4; // Cada respuesta correcta vale 0.4 puntos
+                }
+            });
+
+            score = Math.round(score * 10) / 10; // Redondear a un decimal
+            let feedback = quizData.map((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                let result;
+                if (selected === null) {
+                    result = "No contestada";
+                } else if (selected === true) {
+                    result = "Correcta";
+                } else {
+                    result = "Incorrecta";
+                }
+                return `<p>${index + 1}. ${result}</p>`;
+            }).join("");
+
+            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+
+            attempt++;
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', submitQuiz);
+
+        loadQuiz();
+    </script>
+</body>
+</html>
