@@ -3,365 +3,695 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación: La Célula (Biología)</title>
+    <title>Unidad 9: Genética</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #333;
-        }
-        .quiz-container {
-            background-color: #fff;
             padding: 20px;
-            margin: 20px 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
+        }
+        h1, h2 {
+            text-align: center;
         }
         .question {
-            margin-bottom: 15px;
+            margin: 20px 0;
         }
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-        .options li {
+        .question label {
+            font-weight: bold;
+            display: block;
             margin-bottom: 10px;
         }
-        button {
+        .question .options {
+            margin-left: 20px;
+        }
+        .question .options input {
+            margin-right: 10px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .popup-content input {
+            margin-bottom: 20px;
+            padding: 15px;
+            width: 80%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .popup-content button {
+            padding: 15px 30px;
             background-color: #28a745;
             color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
-        }
-        #results {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        footer {
-            background-color: #333;
+        button.submit-btn {
+            padding: 15px 30px;
+            background-color: #007bff;
             color: #fff;
-            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
             width: 100%;
             text-align: center;
-            position: fixed;
-            bottom: 0;
+        }
+        button.submit-btn:hover {
+            background-color: #0056b3;
+        }
+        #timer {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Evaluación: La Célula (Biología)</h1>
-    <div class="quiz-container">
-        <div id="quiz"></div>
-        <button id="submit">Enviar respuestas</button>
-        <div id="results"></div>
+
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <h2>Complete la siguiente información</h2>
+        <input type="text" id="nombre" placeholder="Nombre Completo" required>
+        <input type="text" id="nie" placeholder="NIE" required>
+        <button onclick="validatePopup()">Continuar</button>
     </div>
-    <footer>
-        &copy; Derechos Reservados Prof. Alberto Sanchez
-    </footer>
-    <script>
-        const quizData = [
-            {
-                question: "¿Qué es una célula?",
-                answers: [
-                    { text: "La unidad básica de la vida.", correct: true },
-                    { text: "Una molécula de ADN.", correct: false },
-                    { text: "Un organismo multicelular.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el núcleo celular?",
-                answers: [
-                    { text: "El organelo que contiene el material genético de la célula.", correct: true },
-                    { text: "La parte de la célula que produce energía.", correct: false },
-                    { text: "La membrana que rodea la célula.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la membrana plasmática?",
-                answers: [
-                    { text: "La barrera que rodea y protege la célula.", correct: true },
-                    { text: "El organelo que produce energía.", correct: false },
-                    { text: "La estructura que contiene el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el citoplasma?",
-                answers: [
-                    { text: "El material gelatinoso dentro de la célula donde se encuentran los organelos.", correct: true },
-                    { text: "La barrera que rodea y protege la célula.", correct: false },
-                    { text: "El organelo que contiene el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué son los ribosomas?",
-                answers: [
-                    { text: "Los organelos donde se sintetizan las proteínas.", correct: true },
-                    { text: "Los organelos que producen energía.", correct: false },
-                    { text: "Los organelos que contienen el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el retículo endoplásmico?",
-                answers: [
-                    { text: "Un sistema de membranas dentro de la célula que ayuda en la síntesis y transporte de proteínas y lípidos.", correct: true },
-                    { text: "Un organelo que produce energía.", correct: false },
-                    { text: "Una estructura que contiene el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el aparato de Golgi?",
-                answers: [
-                    { text: "Un organelo que modifica, clasifica y empaqueta proteínas y lípidos para su transporte.", correct: true },
-                    { text: "Un organelo que produce energía.", correct: false },
-                    { text: "Un organelo que contiene el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué son las mitocondrias?",
-                answers: [
-                    { text: "Los organelos que producen energía a través de la respiración celular.", correct: true },
-                    { text: "Los organelos donde se sintetizan las proteínas.", correct: false },
-                    { text: "Los organelos que contienen el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el citoesqueleto?",
-                answers: [
-                    { text: "Una red de fibras dentro de la célula que proporciona soporte y ayuda en el movimiento celular.", correct: true },
-                    { text: "Un organelo que produce energía.", correct: false },
-                    { text: "Una estructura que contiene el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la pared celular?",
-                answers: [
-                    { text: "Una estructura rígida que rodea la membrana plasmática en las células vegetales.", correct: true },
-                    { text: "Un organelo que produce energía.", correct: false },
-                    { text: "Una estructura que contiene el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué son los cloroplastos?",
-                answers: [
-                    { text: "Los organelos donde se realiza la fotosíntesis en las células vegetales.", correct: true },
-                    { text: "Los organelos que producen energía.", correct: false },
-                    { text: "Los organelos que contienen el material genético.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el ciclo celular?",
-                answers: [
-                    { text: "El conjunto de eventos que una célula atraviesa desde su formación hasta su división.", correct: true },
-                    { text: "El proceso de síntesis de proteínas.", correct: false },
-                    { text: "El proceso de respiración celular.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la mitosis?",
-                answers: [
-                    { text: "El proceso de división celular en el que una célula madre produce dos células hijas genéticamente idénticas.", correct: true },
-                    { text: "El proceso de división celular que reduce el número de cromosomas a la mitad.", correct: false },
-                    { text: "El proceso de síntesis de proteínas.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la meiosis?",
-                answers: [
-                    { text: "El proceso de división celular que reduce el número de cromosomas a la mitad y produce gametos.", correct: true },
-                    { text: "El proceso de división celular en el que una célula madre produce dos células hijas genéticamente idénticas.", correct: false },
-                    { text: "El proceso de síntesis de proteínas.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la apoptosis?",
-                answers: [
-                    { text: "El proceso de muerte celular programada.", correct: true },
-                    { text: "El proceso de división celular.", correct: false },
-                    { text: "El proceso de síntesis de proteínas.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el ciclo de Krebs?",
-                answers: [
-                    { text: "Una serie de reacciones químicas en las mitocondrias que producen energía.", correct: true },
-                    { text: "Una serie de reacciones químicas en los cloroplastos que producen glucosa.", correct: false },
-                    { text: "Una serie de reacciones químicas en el citoplasma que producen ATP.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la fotosíntesis?",
-                answers: [
-                    { text: "El proceso por el cual las plantas convierten la luz solar en energía química.", correct: true },
-                    { text: "El proceso por el cual los animales producen energía.", correct: false },
-                    { text: "El proceso por el cual las bacterias se dividen.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la respiración celular?",
-                answers: [
-                    { text: "El proceso por el cual las células convierten la glucosa en energía utilizable.", correct: true },
-                    { text: "El proceso por el cual las plantas producen glucosa.", correct: false },
-                    { text: "El proceso por el cual las células se dividen.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la fermentación?",
-                answers: [
-                    { text: "Un proceso anaeróbico que permite la producción de energía sin oxígeno.", correct: true },
-                    { text: "Un proceso aeróbico que produce energía con oxígeno.", correct: false },
-                    { text: "Un proceso de división celular.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un orgánulo?",
-                answers: [
-                    { text: "Una estructura especializada dentro de una célula que realiza funciones específicas.", correct: true },
-                    { text: "Un grupo de células que trabajan juntas.", correct: false },
-                    { text: "Una molécula de ADN.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la fagocitosis?",
-                answers: [
-                    { text: "El proceso por el cual una célula engulle partículas grandes o microorganismos.", correct: true },
-                    { text: "El proceso por el cual una célula expulsa partículas.", correct: false },
-                    { text: "El proceso por el cual una célula se divide.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la pinocitosis?",
-                answers: [
-                    { text: "El proceso por el cual una célula engulle pequeñas gotas de líquido.", correct: true },
-                    { text: "El proceso por el cual una célula expulsa partículas.", correct: false },
-                    { text: "El proceso por el cual una célula se divide.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la exocitosis?",
-                answers: [
-                    { text: "El proceso por el cual una célula expulsa partículas grandes o vesículas.", correct: true },
-                    { text: "El proceso por el cual una célula engulle partículas grandes.", correct: false },
-                    { text: "El proceso por el cual una célula se divide.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la endocitosis?",
-                answers: [
-                    { text: "El proceso por el cual una célula engulle partículas grandes o líquidos.", correct: true },
-                    { text: "El proceso por el cual una célula expulsa partículas grandes.", correct: false },
-                    { text: "El proceso por el cual una célula se divide.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la citocinesis?",
-                answers: [
-                    { text: "La división del citoplasma de una célula al final de la mitosis o meiosis.", correct: true },
-                    { text: "La síntesis de proteínas en una célula.", correct: false },
-                    { text: "La respiración celular en una célula.", correct: false }
-                ]
-            }
-        ];
+</div>
 
-        let attempt = 0;
-        const maxAttempts = 3;
+<div class="container" id="evaluation" style="display:none;">
+    <h1>Unidad 9: Genética</h1>
+    <div id="timer">Tiempo restante: 30:00</div>
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+    <!-- Indicador 9.1 -->
+    <h2>Indicador 9.1: Leyes de Mendel</h2>
+    <div class="question">
+        <label>1. ¿Qué enunciado corresponde a la Primera Ley de Mendel o ley de la segregación?</label>
+        <div class="options">
+            <label><input type="radio" name="q1" value="correcto" required> A. Cada individuo tiene dos alelos por cada carácter y estos se separan durante la formación de gametos.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> B. Los caracteres se transmiten juntos de generación en generación.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> C. Los alelos se mezclan al azar en cada generación.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> D. Los caracteres dominantes se expresan en la descendencia sin excepción.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>2. ¿Cuál es la Segunda Ley de Mendel o ley de la segregación independiente?</label>
+        <div class="options">
+            <label><input type="radio" name="q2" value="correcto" required> A. Los diferentes caracteres se heredan de manera independiente uno del otro.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> B. Todos los caracteres se heredan juntos.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> C. Los caracteres recesivos siempre se manifiestan.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> D. Los alelos dominantes y recesivos se mezclan en los gametos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>3. ¿Qué descubrió Mendel a través de sus experimentos con guisantes?</label>
+        <div class="options">
+            <label><input type="radio" name="q3" value="correcto" required> A. Las leyes básicas de la herencia genética.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> B. La existencia de mutaciones genéticas espontáneas.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> C. La estructura del ADN.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> D. El proceso de síntesis de proteínas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>4. ¿Qué significa que un alelo sea dominante?</label>
+        <div class="options">
+            <label><input type="radio" name="q4" value="correcto" required> A. Que siempre se expresa en el fenotipo cuando está presente.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> B. Que nunca se expresa en el fenotipo.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> C. Que se expresa solo en homocigotos.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> D. Que se mezcla con el alelo recesivo para formar un nuevo fenotipo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>5. ¿Qué resultado se espera en la descendencia cuando se cruzan dos individuos heterocigotos para un carácter con dominancia completa?</label>
+        <div class="options">
+            <label><input type="radio" name="q5" value="correcto" required> A. Aproximadamente un 75% mostrará el fenotipo dominante y un 25% el recesivo.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> B. Todos mostrarán el fenotipo dominante.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> C. Aproximadamente un 50% mostrará cada fenotipo.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> D. Todos mostrarán el fenotipo recesivo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>6. ¿Qué tipo de cruzamiento produce un fenotipo 9:3:3:1 en la descendencia?</label>
+        <div class="options">
+            <label><input type="radio" name="q6" value="correcto" required> A. Un cruzamiento dihíbrido.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> B. Un cruzamiento monohíbrido.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> C. Un cruzamiento trihíbrido.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> D. Un cruzamiento recíproco.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>7. ¿Qué representa un cuadrado de Punnett?</label>
+        <div class="options">
+            <label><input type="radio" name="q7" value="correcto" required> A. Las posibles combinaciones de alelos y sus probabilidades en la descendencia.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> B. La estructura del ADN y ARN.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> C. Las secuencias de aminoácidos en las proteínas.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> D. Las mutaciones genéticas en una población.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>8. ¿Qué es un alelo recesivo?</label>
+        <div class="options">
+            <label><input type="radio" name="q8" value="correcto" required> A. Un alelo que solo se expresa en el fenotipo cuando está en homocigosis.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> B. Un alelo que siempre se expresa en el fenotipo.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> C. Un alelo que se mezcla con el dominante para formar un nuevo fenotipo.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> D. Un alelo que nunca se expresa en el fenotipo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>9. ¿Qué descubrió Mendel al cruzar plantas de guisante de distintas características?</label>
+        <div class="options">
+            <label><input type="radio" name="q9" value="correcto" required> A. Que los caracteres se heredan según patrones predecibles.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> B. Que los caracteres no siguen ninguna regla al heredarse.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> C. Que la herencia es completamente aleatoria.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> D. Que la estructura del ADN es la responsable de la herencia.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>10. ¿Qué importancia tienen las leyes de Mendel en la genética moderna?</label>
+        <div class="options">
+            <label><input type="radio" name="q10" value="correcto" required> A. Son la base para entender cómo se transmiten los caracteres de una generación a otra.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> B. Solo son aplicables a plantas y no tienen relevancia en otros organismos.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> C. Se usan solo para explicar mutaciones raras.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> D. Son irrelevantes en la genética moderna.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 9.2 -->
+    <h2>Indicador 9.2: Patrones de herencia</h2>
+    <div class="question">
+        <label>11. En el caso de la herencia dominante, ¿qué fenotipo se observa en la descendencia?</label>
+        <div class="options">
+            <label><input type="radio" name="q11" value="correcto" required> A. El fenotipo del alelo dominante.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> B. El fenotipo del alelo recesivo.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> C. Una mezcla de ambos fenotipos.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> D. Ningún fenotipo es observable.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>12. ¿Qué característica define a la herencia recesiva?</label>
+        <div class="options">
+            <label><input type="radio" name="q12" value="correcto" required> A. El fenotipo recesivo solo se expresa cuando el individuo es homocigoto para el alelo recesivo.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> B. El fenotipo recesivo siempre se expresa en el fenotipo.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> C. El fenotipo recesivo se expresa cuando está presente al menos un alelo recesivo.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> D. El fenotipo recesivo se expresa en individuos heterocigotos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>13. ¿Qué patrón de herencia sigue una enfermedad ligada al cromosoma X?</label>
+        <div class="options">
+            <label><input type="radio" name="q13" value="correcto" required> A. La enfermedad se transmite más frecuentemente en hombres que en mujeres.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> B. La enfermedad afecta por igual a hombres y mujeres.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> C. Solo las mujeres pueden heredar la enfermedad.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> D. Solo los hombres pueden heredar la enfermedad.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>14. ¿Qué significa que un rasgo sea ligado al sexo?</label>
+        <div class="options">
+            <label><input type="radio" name="q14" value="correcto" required> A. Que el gen responsable del rasgo está ubicado en uno de los cromosomas sexuales.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> B. Que el rasgo solo se manifiesta en individuos de un sexo específico.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> C. Que el rasgo está determinado por genes en autosomas.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> D. Que el rasgo está influenciado por las hormonas sexuales.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>15. ¿Qué es un heterocigoto?</label>
+        <div class="options">
+            <label><input type="radio" name="q15" value="correcto" required> A. Un organismo que tiene dos alelos diferentes para un carácter particular.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> B. Un organismo que tiene dos alelos iguales para un carácter particular.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> C. Un organismo que no tiene alelos para un carácter particular.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> D. Un organismo que tiene un solo alelo para un carácter particular.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>16. ¿Cómo se heredan los caracteres ligados al cromosoma Y?</label>
+        <div class="options">
+            <label><input type="radio" name="q16" value="correcto" required> A. Se heredan exclusivamente de padre a hijo varón.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> B. Se heredan de madre a hijo.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> C. Se heredan por igual de ambos padres.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> D. Se heredan exclusivamente de madre a hija.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>17. ¿Qué es un portador en términos de genética ligada al sexo?</label>
+        <div class="options">
+            <label><input type="radio" name="q17" value="correcto" required> A. Un individuo que tiene un alelo recesivo para un rasgo ligado al sexo, pero no expresa el fenotipo.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> B. Un individuo que siempre expresa el fenotipo de un rasgo ligado al sexo.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> C. Un individuo que tiene dos alelos dominantes para un rasgo ligado al sexo.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> D. Un individuo que no tiene alelos para un rasgo ligado al sexo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>18. ¿Qué genotipos son posibles en la descendencia de un cruzamiento entre un hombre con daltonismo y una mujer portadora de daltonismo?</label>
+        <div class="options">
+            <label><input type="radio" name="q18" value="correcto" required> A. Hijos varones afectados, hijas portadoras o afectadas.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> B. Todos los hijos e hijas serán normales.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> C. Solo las hijas serán afectadas.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> D. Solo los hijos varones serán afectados.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>19. ¿Qué diferencia existe entre la herencia autosómica dominante y la ligada al sexo?</label>
+        <div class="options">
+            <label><input type="radio" name="q19" value="correcto" required> A. La herencia autosómica dominante afecta por igual a ambos sexos, mientras que la ligada al sexo afecta de manera diferente a hombres y mujeres.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> B. La herencia autosómica dominante solo afecta a un sexo.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> C. La herencia ligada al sexo solo afecta a individuos heterocigotos.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> D. No existe diferencia, ambas afectan por igual a todos los individuos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>20. ¿Cuál es el resultado fenotípico de un cruzamiento entre un individuo homocigoto dominante y uno homocigoto recesivo?</label>
+        <div class="options">
+            <label><input type="radio" name="q20" value="correcto" required> A. Toda la descendencia mostrará el fenotipo dominante.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> B. Toda la descendencia mostrará el fenotipo recesivo.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> C. La descendencia mostrará un fenotipo intermedio.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> D. La descendencia mostrará una mezcla de ambos fenotipos.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 9.3 -->
+    <h2>Indicador 9.3: Estructura y función del ADN y ARN</h2>
+    <div class="question">
+        <label>21. ¿Cuál es la principal función del ADN en los seres vivos?</label>
+        <div class="options">
+            <label><input type="radio" name="q21" value="correcto" required> A. Almacenar y transmitir la información genética.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> B. Producir energía a partir de los nutrientes.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> C. Regular la cantidad de agua en las células.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> D. Descomponer los residuos celulares.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>22. ¿Qué función cumple el ARN mensajero (ARNm) en la síntesis de proteínas?</label>
+        <div class="options">
+            <label><input type="radio" name="q22" value="correcto" required> A. Transporta la información genética del ADN a los ribosomas para la síntesis de proteínas.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> B. Cataliza las reacciones químicas necesarias para la síntesis de proteínas.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> C. Forma la estructura principal de los ribosomas.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> D. Transporta aminoácidos a los ribosomas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>23. ¿Cómo se relaciona la secuencia de nucleótidos en el ADN con la síntesis de proteínas?</label>
+        <div class="options">
+            <label><input type="radio" name="q23" value="correcto" required> A. La secuencia de nucleótidos en el ADN determina el orden de los aminoácidos en la proteína.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> B. La secuencia de nucleótidos en el ADN no tiene relación con la síntesis de proteínas.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> C. La secuencia de nucleótidos en el ADN solo se relaciona con la replicación del ADN.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> D. La secuencia de nucleótidos en el ADN es aleatoria y no afecta la síntesis de proteínas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>24. ¿Qué es un codón en el contexto del ARN mensajero?</label>
+        <div class="options">
+            <label><input type="radio" name="q24" value="correcto" required> A. Un triplete de nucleótidos que codifica un aminoácido específico.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> B. Un nucleótido suelto que se une al ribosoma.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> C. Un triplete de aminoácidos que codifica una proteína.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> D. Un tipo de enzima que cataliza la síntesis de proteínas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>25. ¿Qué proceso convierte la información del ADN en ARN mensajero?</label>
+        <div class="options">
+            <label><input type="radio" name="q25" value="correcto" required> A. Transcripción.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> B. Traducción.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> C. Replicación.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> D. Transducción.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>26. ¿Dónde ocurre la traducción del ARN en una célula eucariota?</label>
+        <div class="options">
+            <label><input type="radio" name="q26" value="correcto" required> A. En los ribosomas del citoplasma.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> B. En el núcleo.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> C. En el aparato de Golgi.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> D. En la membrana celular.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>27. ¿Cuál es la función del ARN de transferencia (ARNt) durante la síntesis de proteínas?</label>
+        <div class="options">
+            <label><input type="radio" name="q27" value="correcto" required> A. Transportar aminoácidos al ribosoma para ensamblar la proteína.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> B. Formar parte de la estructura del ribosoma.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> C. Codificar la secuencia de aminoácidos de la proteína.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> D. Descomponer las proteínas después de su síntesis.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>28. ¿Qué son los intrones y exones en un gen?</label>
+        <div class="options">
+            <label><input type="radio" name="q28" value="correcto" required> A. Los intrones son secuencias no codificantes, y los exones son secuencias codificantes del gen.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> B. Los intrones son las secuencias codificantes, y los exones son secuencias no codificantes del gen.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> C. Ambos son secuencias codificantes de proteínas.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> D. Ambos son secuencias no codificantes de proteínas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>29. ¿Qué es la replicación del ADN?</label>
+        <div class="options">
+            <label><input type="radio" name="q29" value="correcto" required> A. El proceso por el cual se copia la molécula de ADN antes de la división celular.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> B. El proceso por el cual el ARN se traduce en proteínas.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> C. El proceso por el cual se elimina el ARN defectuoso.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> D. El proceso por el cual se sintetizan nuevos nucleótidos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>30. ¿Qué es la traducción en el contexto de la biología molecular?</label>
+        <div class="options">
+            <label><input type="radio" name="q30" value="correcto" required> A. El proceso por el cual la secuencia de ARN mensajero se utiliza para sintetizar una proteína.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> B. El proceso por el cual el ADN se copia en ARN.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> C. El proceso por el cual el ADN se replica.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> D. El proceso por el cual se eliminan las secuencias no codificantes del ARN.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 9.4 -->
+    <h2>Indicador 9.4: Mutaciones genéticas</h2>
+    <div class="question">
+        <label>31. ¿Qué es una mutación genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q31" value="correcto" required> A. Un cambio en la secuencia del ADN.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> B. Una variación en la expresión fenotípica sin alteración genética.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> C. Una mezcla de dos tipos de ADN sin cambios en la secuencia.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> D. La eliminación completa de un gen.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>32. ¿Qué es una mutación puntual?</label>
+        <div class="options">
+            <label><input type="radio" name="q32" value="correcto" required> A. Un cambio en un solo par de bases en la secuencia de ADN.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> B. Una duplicación de un segmento del ADN.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> C. La eliminación de un cromosoma completo.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> D. La inversión de una secuencia larga de ADN.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>33. ¿Cuál de los siguientes es un efecto posible de una mutación génica?</label>
+        <div class="options">
+            <label><input type="radio" name="q33" value="correcto" required> A. Cambios en la función de una proteína.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> B. Ningún cambio en el fenotipo.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> C. Aumento en el número de cromosomas.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> D. Creación de nuevas especies instantáneamente.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>34. ¿Qué es una mutación silenciosa?</label>
+        <div class="options">
+            <label><input type="radio" name="q34" value="correcto" required> A. Una mutación que no afecta la secuencia de aminoácidos de la proteína.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> B. Una mutación que elimina un gen completo.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> C. Una mutación que cambia la función de una proteína.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> D. Una mutación que añade nuevos genes al genoma.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>35. ¿Cuál de las siguientes es una mutación cromosómica?</label>
+        <div class="options">
+            <label><input type="radio" name="q35" value="correcto" required> A. Translocación.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> B. Inserción de un par de bases.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> C. Cambio en una base del ADN.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> D. Sustitución de un aminoácido.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>36. ¿Qué factor puede aumentar la tasa de mutaciones en un organismo?</label>
+        <div class="options">
+            <label><input type="radio" name="q36" value="correcto" required> A. Exposición a radiación ultravioleta.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> B. Alimentos ricos en vitaminas.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> C. Vida en un entorno con baja radiación.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> D. Ejercicio regular.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>37. ¿Qué impacto pueden tener las mutaciones en la evolución de una especie?</label>
+        <div class="options">
+            <label><input type="radio" name="q37" value="correcto" required> A. Pueden introducir nuevas variaciones genéticas que afecten la evolución.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> B. Siempre son perjudiciales y eliminan a la especie.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> C. No tienen ningún impacto en la evolución.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> D. Solo afectan a los individuos y no a la especie.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>38. ¿Qué es una mutación inducida?</label>
+        <div class="options">
+            <label><input type="radio" name="q38" value="correcto" required> A. Una mutación causada por un agente externo como radiación o sustancias químicas.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> B. Una mutación que ocurre de manera espontánea sin intervención externa.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> C. Una mutación que se hereda de los padres sin cambios externos.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> D. Una mutación que ocurre solo en células reproductoras.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>39. ¿Qué es la aneuploidía?</label>
+        <div class="options">
+            <label><input type="radio" name="q39" value="correcto" required> A. La presencia de un número anormal de cromosomas en una célula.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> B. La duplicación completa del genoma de un organismo.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> C. La eliminación de un segmento de un cromosoma.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> D. La mutación de un solo gen en un cromosoma.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>40. ¿Cuál de las siguientes es una causa común de mutaciones espontáneas?</label>
+        <div class="options">
+            <label><input type="radio" name="q40" value="correcto" required> A. Errores en la replicación del ADN.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> B. Exposición a luz visible.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> C. Consumo de alimentos orgánicos.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> D. Baja temperatura ambiental.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 9.5 -->
+    <h2>Indicador 9.5: Ingeniería genética</h2>
+    <div class="question">
+        <label>41. ¿Qué es la ingeniería genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q41" value="correcto" required> A. La manipulación directa de los genes de un organismo.</label><br>
+            <label><input type="radio" name="q41" value="incorrecto" required> B. El cultivo de tejidos celulares sin cambios genéticos.</label><br>
+            <label><input type="radio" name="q41" value="incorrecto" required> C. La selección de organismos con características deseables.</label><br>
+            <label><input type="radio" name="q41" value="incorrecto" required> D. La mezcla de ADN de diferentes especies sin alteraciones genéticas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>42. ¿Qué tecnología se utiliza para cortar y pegar segmentos de ADN en ingeniería genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q42" value="correcto" required> A. Enzimas de restricción y ligasas.</label><br>
+            <label><input type="radio" name="q42" value="incorrecto" required> B. ARN de transferencia.</label><br>
+            <label><input type="radio" name="q42" value="incorrecto" required> C. Ribosomas y ARNm.</label><br>
+            <label><input type="radio" name="q42" value="incorrecto" required> D. Proteínas de membrana.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>43. ¿Qué es la terapia génica?</label>
+        <div class="options">
+            <label><input type="radio" name="q43" value="correcto" required> A. Un tratamiento que corrige defectos genéticos insertando genes funcionales en el genoma de un paciente.</label><br>
+            <label><input type="radio" name="q43" value="incorrecto" required> B. Un procedimiento para eliminar genes defectuosos sin alteración genética.</label><br>
+            <label><input type="radio" name="q43" value="incorrecto" required> C. Un tratamiento que usa medicamentos para cambiar la expresión génica sin alterar el ADN.</label><br>
+            <label><input type="radio" name="q43" value="incorrecto" required> D. Un procedimiento para duplicar el genoma completo de un organismo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>44. ¿Qué organismo se utiliza comúnmente como modelo en ingeniería genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q44" value="correcto" required> A. Escherichia coli (E. coli).</label><br>
+            <label><input type="radio" name="q44" value="incorrecto" required> B. Homo sapiens (seres humanos).</label><br>
+            <label><input type="radio" name="q44" value="incorrecto" required> C. Panthera leo (león).</label><br>
+            <label><input type="radio" name="q44" value="incorrecto" required> D. Drosophila melanogaster (mosca de la fruta).</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>45. ¿Qué es un organismo genéticamente modificado (OGM)?</label>
+        <div class="options">
+            <label><input type="radio" name="q45" value="correcto" required> A. Un organismo cuyo material genético ha sido alterado utilizando técnicas de ingeniería genética.</label><br>
+            <label><input type="radio" name="q45" value="incorrecto" required> B. Un organismo que ha sido sometido a selección natural para obtener características deseables.</label><br>
+            <label><input type="radio" name="q45" value="incorrecto" required> C. Un organismo que ha sufrido mutaciones espontáneas en la naturaleza.</label><br>
+            <label><input type="radio" name="q45" value="incorrecto" required> D. Un organismo que ha evolucionado de manera natural.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>46. ¿Qué es CRISPR-Cas9 en el contexto de la ingeniería genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q46" value="correcto" required> A. Una herramienta molecular utilizada para editar genes con alta precisión.</label><br>
+            <label><input type="radio" name="q46" value="incorrecto" required> B. Una proteína que regula la expresión génica.</label><br>
+            <label><input type="radio" name="q46" value="incorrecto" required> C. Un tipo de ADN que solo se encuentra en bacterias.</label><br>
+            <label><input type="radio" name="q46" value="incorrecto" required> D. Un organismo genéticamente modificado con fines experimentales.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>47. ¿Qué ventajas ofrece la tecnología de transgénicos en la agricultura?</label>
+        <div class="options">
+            <label><input type="radio" name="q47" value="correcto" required> A. Desarrollo de cultivos resistentes a plagas y enfermedades.</label><br>
+            <label><input type="radio" name="q47" value="incorrecto" required> B. Reducción de la biodiversidad.</label><br>
+            <label><input type="radio" name="q47" value="incorrecto" required> C. Aumento en la susceptibilidad a enfermedades.</label><br>
+            <label><input type="radio" name="q47" value="incorrecto" required> D. Dependencia de pesticidas y herbicidas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>48. ¿Qué es la clonación en el contexto de la ingeniería genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q48" value="correcto" required> A. La creación de una copia genética idéntica de un organismo.</label><br>
+            <label><input type="radio" name="q48" value="incorrecto" required> B. La combinación de ADN de dos especies diferentes.</label><br>
+            <label><input type="radio" name="q48" value="incorrecto" required> C. La modificación del ADN para crear nuevas especies.</label><br>
+            <label><input type="radio" name="q48" value="incorrecto" required> D. La eliminación de genes defectuosos en un organismo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>49. ¿Qué preocupación ética se asocia comúnmente con la ingeniería genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q49" value="correcto" required> A. La posibilidad de crear organismos con características no deseadas o peligrosas.</label><br>
+            <label><input type="radio" name="q49" value="incorrecto" required> B. La reducción del rendimiento agrícola.</label><br>
+            <label><input type="radio" name="q49" value="incorrecto" required> C. La imposibilidad de modificar genes en organismos vivos.</label><br>
+            <label><input type="radio" name="q49" value="incorrecto" required> D. La ausencia de impactos ambientales.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>50. ¿Qué es la biotecnología en relación con la ingeniería genética?</label>
+        <div class="options">
+            <label><input type="radio" name="q50" value="correcto" required> A. El uso de organismos vivos o sistemas biológicos para desarrollar productos útiles.</label><br>
+            <label><input type="radio" name="q50" value="incorrecto" required> B. La práctica de agricultura tradicional sin modificación genética.</label><br>
+            <label><input type="radio" name="q50" value="incorrecto" required> C. El estudio de animales en su hábitat natural.</label><br>
+            <label><input type="radio" name="q50" value="incorrecto" required> D. El uso de plantas para producir energía renovable sin cambios genéticos.</label>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="calculateGrade()">Obtener Calificación</button>
+</div>
+
+<div class="popup" id="finalPopup" style="display: none;">
+    <div class="popup-content">
+        <h2>Resultado de la Evaluación</h2>
+        <p id="nombreFinal"></p>
+        <p id="nieFinal"></p>
+        <p id="gradeFinal"></p>
+        <button onclick="closePopup()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+    const authorizedNIEs = [
+        "4839280", "19711634", "4839293", "6297544", "19711644",
+        "3850927", "19711635", "4267835", "3293986", "19711278",
+        "19711637", "4267839", "19806177", "4839298", "4267832",
+        "4267843", "4839279", "4839301", "19964688"
+    ];
+
+    let timer;
+    let totalSeconds = 1800;
+
+    window.onload = function() {
+        document.getElementById('popup').style.display = 'flex';
+    };
+
+    function validatePopup() {
+        const nombre = document.getElementById('nombre').value;
+        const nie = document.getElementById('nie').value;
+
+        if (nombre === "" || nie === "") {
+            alert("Por favor, complete todos los campos.");
+        } else if (!authorizedNIEs.includes(nie)) {
+            alert("NIE no autorizado.");
+        } else {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('evaluation').style.display = 'block';
+            startTimer();
         }
+    }
 
-        function loadQuiz() {
-            const quizContainer = document.getElementById('quiz');
-            quizContainer.innerHTML = '';
-            quizData.forEach((data, index) => {
-                const questionContainer = document.createElement('div');
-                questionContainer.className = 'question';
+    function startTimer() {
+        timer = setInterval(function() {
+            totalSeconds--;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            document.getElementById('timer').textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-                const questionTitle = document.createElement('h3');
-                questionTitle.innerText = `${index + 1}. ${data.question}`;
-                questionContainer.appendChild(questionTitle);
-
-                const optionsList = document.createElement('ul');
-                optionsList.className = 'options';
-
-                shuffle(data.answers).forEach(answer => {
-                    const option = document.createElement('li');
-                    const optionLabel = document.createElement('label');
-                    const optionInput = document.createElement('input');
-                    optionInput.type = 'radio';
-                    optionInput.name = `question${index}`;
-                    optionInput.value = answer.correct;
-                    optionLabel.appendChild(optionInput);
-                    optionLabel.appendChild(document.createTextNode(answer.text));
-                    option.appendChild(optionLabel);
-                    optionsList.appendChild(option);
-                });
-
-                questionContainer.appendChild(optionsList);
-                quizContainer.appendChild(questionContainer);
-            });
-        }
-
-        function submitQuiz() {
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-                return;
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                calculateGrade();
             }
+        }, 1000);
+    }
 
-            const resultsContainer = document.getElementById('results');
-            const answers = document.querySelectorAll('input[type="radio"]:checked');
-            let score = 0;
+    function calculateGrade() {
+        const totalQuestions = document.querySelectorAll('.question').length;
+        const correctAnswers = document.querySelectorAll('input[type="radio"]:checked[value="correcto"]').length;
+        const maxPoints = 10;
+        const grade = (correctAnswers / totalQuestions) * maxPoints;
 
-            quizData.forEach((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                if (selected === true) {
-                    score += 0.4; // Cada respuesta correcta vale 0.4 puntos
-                }
-            });
+        document.getElementById('nombreFinal').textContent = "Nombre: " + document.getElementById('nombre').value;
+        document.getElementById('nieFinal').textContent = "NIE: " + document.getElementById('nie').value;
+        document.getElementById('gradeFinal').textContent = "Su calificación es: " + grade.toFixed(2) + " de " + maxPoints;
 
-            score = Math.round(score * 10) / 10; // Redondear a un decimal
-            let feedback = quizData.map((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                let result;
-                if (selected === null) {
-                    result = "No contestada";
-                } else if (selected === true) {
-                    result = "Correcta";
-                } else {
-                    result = "Incorrecta";
-                }
-                return `<p>${index + 1}. ${result}</p>`;
-            }).join("");
+        document.getElementById('finalPopup').style.display = 'flex';
+    }
 
-            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+    function closePopup() {
+        document.getElementById('finalPopup').style.display = 'none';
+    }
+</script>
 
-            attempt++;
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-            }
-        }
-
-        document.getElementById('submit').addEventListener('click', submitQuiz);
-
-        loadQuiz();
-    </script>
 </body>
 </html>
